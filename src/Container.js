@@ -39,9 +39,9 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = ({ selection }) => {
+const mapStateToProps = ({ home }) => {
 
-    const { isInHome } = selection;
+    const { isInHome } = home;
 
     return{
         isInHome

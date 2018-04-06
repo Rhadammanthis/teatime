@@ -1,2 +1,2 @@
-export * from './SelectionActions';
+export * from './HomeActions';
 export * from './DataActions';

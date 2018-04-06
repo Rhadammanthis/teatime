@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
-import SelectionReducer from './SelectionReducer';
+import HomeReducer from './HomeReducer';
 import DataReducer from './DataReducer';
 // import EmployeeReducer from './EmployeeReducer'
 
 export default combineReducers({
-    selection: SelectionReducer,
+    home: HomeReducer,
     data: DataReducer,
     // employees: EmployeeReducer
 });
