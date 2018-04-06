@@ -10,8 +10,8 @@ class Detail extends Component {
     company = null;
 
     state = {
-        anim: new Animated.ValueXY(),
-        animInfo: new Animated.ValueXY(),
+        animImageTranslation: new Animated.ValueXY(),
+        animInfoBox: new Animated.ValueXY(),
         animCloseButton: new Animated.Value(0),
         screenCenterX: 0,
         screenCenterY: 0
@@ -24,25 +24,25 @@ class Detail extends Component {
         }, () => {
 
             Animated.parallel([
-                Animated.timing(this.state.anim.x, {
+                Animated.timing(this.state.animImageTranslation.x, {
                     toValue: 1,
                     duration: 700,
                     easing: Easing.in(Easing.quad)
                 }),
-                Animated.timing(this.state.anim.y, {
+                Animated.timing(this.state.animImageTranslation.y, {
                     toValue: 1,
                     duration: 700,
                     easing: Easing.in(Easing.quad)
                 }),
                 Animated.stagger(200, [
                     //Translation
-                    Animated.timing(this.state.animInfo.x, {
+                    Animated.timing(this.state.animInfoBox.x, {
                         toValue: 1,
                         duration: 700,
                         easing: Easing.in(Easing.quad)
                     }),
                     //Fade
-                    Animated.timing(this.state.animInfo.y, {
+                    Animated.timing(this.state.animInfoBox.y, {
                         toValue: 1,
                         duration: 700,
                         easing: Easing.in(Easing.quad)
@@ -101,16 +101,14 @@ class Detail extends Component {
     renderDetail() {
         if (this.props.fetchedFinished) {
 
+            //Looksup an elemnt that has all the necessary information
             var active;
             this.props.fetchedData.data.results.forEach(element => {
                 if (element.active === 1)
                     active = element
             });
-
-            console.log('RGBA',this.company.rgba)
-
             return (
-                <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={ styles.textLayout }>
                     <Text style={{ color: this.company.color, fontSize: 13, fontWeight: 'bold' }}>
                         {active.sn}
                     </Text>
@@ -128,34 +126,37 @@ class Detail extends Component {
         )
     }
 
+    //Retracks anims and bavigates back
     startExitFlow() {
-        // opacity: this.state.animInfo.x
+        
+        //Plays animations in reverse
         Animated.sequence([
             Animated.timing(this.state.animCloseButton, {
                 toValue: 0,
                 duration: 500,
                 easing: Easing.in(Easing.quad)
             }),
-            Animated.timing(this.state.animInfo.x, {
+            Animated.timing(this.state.animInfoBox.x, {
                 toValue: 0,
-                duration: 400,
+                duration: 300,
                 easing: Easing.in(Easing.quad)
             }),
             Animated.parallel([
-                Animated.timing(this.state.anim.x, {
+                Animated.timing(this.state.animImageTranslation.x, {
                     toValue: 0,
                     duration: 400,
                     easing: Easing.in(Easing.quad)
                 }),
-                Animated.timing(this.state.anim.y, {
+                Animated.timing(this.state.animImageTranslation.y, {
                     toValue: 0,
                     duration: 400,
                     easing: Easing.in(Easing.quad)
                 }),
             ])
         ]).start(onComplete = () => {
+
+            //Notifies parent component that we're going back to main view
             this.props.goToHome()
-            // this.props.resetView()
         })
 
     }
@@ -172,13 +173,13 @@ class Detail extends Component {
                     left: this.props.centerX,
                     top: this.props.centerY,
                     transform: [{
-                        translateX: this.state.anim.x.interpolate({
+                        translateX: this.state.animImageTranslation.x.interpolate({
                             inputRange: [0, 1],
                             outputRange: [this.props.centerX, resultant.x]
                         })
                     },
                     {
-                        translateY: this.state.anim.y.interpolate({
+                        translateY: this.state.animImageTranslation.y.interpolate({
                             inputRange: [0, 1],
                             outputRange: [this.props.centerY, resultant.y]
                         })
@@ -189,9 +190,9 @@ class Detail extends Component {
                 <Animated.View style={[styles.button, {
                     height: this.props.buttonHeight,
                     width: this.props.buttonWidth,
-                    opacity: this.state.animInfo.x,
+                    opacity: this.state.animInfoBox.x,
                     transform: [{
-                        translateY: this.state.animInfo.y.interpolate({
+                        translateY: this.state.animInfoBox.y.interpolate({
                             inputRange: [0, 1],
                             outputRange: [this.state.screenCenterY, this.calculateResultant(this.state.screenCenterX, this.state.screenCenterY + 30, this.state.screenCenterX, this.state.screenCenterY).y]
                         })
@@ -199,20 +200,14 @@ class Detail extends Component {
                 }]}>
                     {this.renderDetail()}
                 </Animated.View>
-                <Animated.View style={{
-                    width: 50,
-                    height: 50,
-                    backgroundColor: '#00000033',
-                    borderRadius: 100,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                <Animated.View style={[styles.cloaseButton, {
                     transform: [{
                         translateY: this.state.animCloseButton.interpolate({
                             inputRange: [0, 1],
                             outputRange: [Dimensions.get('window').height, 250]
                         })
                     }]
-                }}>
+                }]}>
                     <TouchableWithoutFeedback onPress={this.startExitFlow.bind(this)}>
                         <View>
                             <Text>
@@ -225,6 +220,7 @@ class Detail extends Component {
         )
     }
 
+    //Calculates the vector to compose a lenar translatioin between two point
     calculateResultant(Px, Py, Qx, Qy) {
         return { x: Px - Qx, y: Py - Qy }
     }
@@ -247,11 +243,18 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10,
     },
-    statusBarBackground: {
-        //height: (Platform.OS === 'ios') ? 20 : 10, //this is just to test if the platform is iOS to give it a height of 20, else, no height (Android apps have their own status bar)
-        height: 20,
-        backgroundColor: "white",
-    }
+    cloaseButton: {
+        width: 50,
+        height: 50,
+        backgroundColor: '#00000033',
+        borderRadius: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    textLayout:{ flex: 1, 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center' }
 });
 
 const mapStateToProps = ({ data }) => {

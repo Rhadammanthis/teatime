@@ -41,17 +41,17 @@ class Button extends Component {
         Animated.parallel([
             Animated.timing(this.company.anim.x, {
                 toValue: 1,
-                duration: 400,
-                easing: Easing.in(Easing.quad)
+                duration: 700,
+                easing: Easing.back()
             }),
             Animated.timing(this.company.anim.y, {
                 toValue: 1,
-                duration: 400,
-                easing: Easing.in(Easing.quad)
+                duration: 700,
+                easing: Easing.back()
             }),
             Animated.timing(this.company.extraAnim, {
                 toValue: 1,
-                duration: 800,
+                duration: 700,
                 easing: Easing.out(Easing.cubic)
             }),
         ]).start(onComplete = () => {
@@ -70,7 +70,7 @@ class Button extends Component {
                     Animated.timing(
                         this.props.scale, {
                             toValue: 1.0,
-                            duration: 400
+                            duration: 450
                         }
                     )
                 ])
