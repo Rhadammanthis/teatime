@@ -48,7 +48,7 @@ export const saveSelectedElementsPosition = (type, x, y, width, height) => {
     var selectedElemntPositionX, selectedElemntPositionY
     const marginOffset = 10
     
-    //Manual calibration of elemt position due to lack of documentation fro the onLayout method
+    //Manual calibration of elemt position due to lack of documentation from the onLayout method
     switch (type) {
         case TEATIME:
             selectedElemntPositionX = x

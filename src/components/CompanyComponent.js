@@ -25,19 +25,27 @@ class CompanyComponent extends Component {
 
     }
 
+    //starts doing fun stuff
     onClick() {
+        //launches the async call for the company's data
         this.props.fetchCompanyData(this.props.type)
+
+        //Alerts Redux of which component was selected
         this.props.selectElement(this.props.type)
+
+        //Saves to Redux the position of the selected component
         this.props.saveSelectedElementsPosition(this.props.type, this.state.x, this.state.y, this.state.width, this.state.height)
+
+        //Makes the necessary calculations to know which vector has to be supplies to wich coordinate in order to correctly animate the components
         this.props.updateTranslationTargetCoordinates(this.props.type, {teatime: this.props.teatime, wow: this.props.wow, kolibri: this.props.kolibri, gangverk: this.props.gangverk})
     }
 
     initAnimationFlow() {
 
-        console.log('Preparing to animate', this.company)
-
+        //Notifies the parent component that the Home Button should begin animating
         this.props.startHomeButtonAnim();
 
+        //Starts the navigation
         Animated.parallel([
             Animated.timing(this.company.animTranslation.x, {
                 toValue: 1,
@@ -125,6 +133,7 @@ class CompanyComponent extends Component {
 
     render() {
 
+        //Obtains an instance of the company with all it's data from Redux
         switch (this.props.type) {
             case TEATIME:
                 this.company = this.props.teatime
@@ -140,12 +149,15 @@ class CompanyComponent extends Component {
                 break;
         }
 
+        //Make sure that we are rendering something
         if (this.company !== null) {
 
+            //Checks if the animations need to be rewinded
             if(this.props.shouldReverse){
                 this.reverseAnims()
             }
 
+            //Starts animating the components
             if (this.props.coordsUpdated) {
                 this.initAnimationFlow()
             }
@@ -155,24 +167,25 @@ class CompanyComponent extends Component {
                     elevation: this.company.z, margin: 10,
                     transform: [{
                             translateX: this.company.animTranslation.x.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, this.company.translationTargetX]
+                                inputRange: [0, 0.5 , 1],
+                                outputRange: [0, this.company.translationTargetX / 2, this.company.translationTargetX]
                             })
                         }, 
                         {
                             translateY: this.company.animTranslation.y.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, this.company.translationTargetY]
+                                inputRange: [0, 0.5, 1],
+                                outputRange: [0, this.company.translationTargetY/2, this.company.translationTargetY]
                             })
                         },
+                        // Checks if the component is the one selected by the user. The scale animation varies depending
+                        //on if it is or not
                         this.props.selection !== this.props.type ?
                             {
                                 scale: this.company.animScale.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [1, 0.65]
+                                    inputRange: [0, 0.5, 1],
+                                    outputRange: [1, 0.32, 0.65]
                                 })
-                            }
-                            :
+                            } :
                             {
                                 scale: this.props.scale
                             }
@@ -184,7 +197,7 @@ class CompanyComponent extends Component {
                             justifyContent: 'center', flex: 1, flexDirection: 'column'
                         }}>
                             <Image style={{ flex: 1 }} source={this.company.image} resizeMode="contain" />
-                            <Text style={{ fontSize: 13, marginBottom: 10, color: '#00000066' }}>
+                            <Text style={ styles.companyName}>
                                 {this.company.name}
                             </Text>
                         </View>
@@ -216,6 +229,11 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10,
     },
+    companyName: { 
+        fontSize: 13, 
+        marginBottom: 10, 
+        color: '#00000066' 
+    }
 });
 
 const mapStateToProps = ({ data }) => {

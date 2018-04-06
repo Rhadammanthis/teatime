@@ -16,7 +16,9 @@ class DetailScreen extends Component {
         screenCenterY: 0
     }
 
-    shouldComponentUpdate(np, tp){
+    shouldComponentUpdate(np, tp) {
+
+        //Triggers the main bulk animation
         Animated.parallel([
             Animated.timing(this.state.animImageTranslation.x, {
                 toValue: 1,
@@ -47,7 +49,6 @@ class DetailScreen extends Component {
                 }),
             ]),
         ]).start(onComplete = () => {
-            console.log('Finished')
             Animated.sequence([
                 Animated.delay(1500),
                 Animated.timing(this.state.animCloseButton, {
@@ -63,6 +64,8 @@ class DetailScreen extends Component {
     }
 
     componentDidMount() {
+
+        //gets a refrence of the device's width and height
         this.setState({
             screenCenterX: (Dimensions.get('window').width / 2) - (this.props.elementWidth / 2),
             screenCenterY: (Dimensions.get('window').height / 2) - (this.props.elementHeight * 1.5),
@@ -71,7 +74,9 @@ class DetailScreen extends Component {
         })
     }
 
-    renderButton() {
+    //Renders an exact replica of the selected component in the execat place were the other one was
+    //This helps making thetransition between both scenes a bit seemless
+    renderCompanyComponent() {
 
         switch (this.props.selection) {
             case TEATIME:
@@ -106,10 +111,13 @@ class DetailScreen extends Component {
         return <View />
     }
 
+    //Renders the component with company's information
     renderDetail() {
+
+        //Renders a placeholder if the request hasn't calledback
         if (this.props.fetchedFinished) {
 
-            //Looksup an elemnt that has all the necessary information
+            //Looks up an elemnt that has all the necessary information
             var active;
             this.props.fetchedData.data.results.forEach(element => {
                 if (element.active === 1)
@@ -134,7 +142,7 @@ class DetailScreen extends Component {
         )
     }
 
-    //Retracks anims and bavigates back
+    //rewinds anims and navigates back to HomeScreen
     startExitFlow() {
 
         //Plays animations in reverse
@@ -175,10 +183,13 @@ class DetailScreen extends Component {
 
     render() {
 
+        //vector in between the component's position and the center of the screen
         var resultant = this.calculateResultant(this.state.screenCenterX, this.state.screenCenterY, this.props.selectedElemntPositionX, this.props.selectedElemntPositionY)
 
         return (
             <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
+
+                {/* Renders the company component  */}
                 <Animated.View style={[styles.button, {
                     height: this.props.elementHeight,
                     width: this.props.elementWidth,
@@ -197,8 +208,10 @@ class DetailScreen extends Component {
                         })
                     }]
                 }]}>
-                    {this.renderButton()}
+                    {this.renderCompanyComponent()}
                 </Animated.View>
+
+                {/* Renders the component with the company's data  */}
                 <Animated.View style={[styles.button, {
                     height: this.props.elementHeight,
                     width: this.props.elementWidth,
@@ -212,6 +225,8 @@ class DetailScreen extends Component {
                 }]}>
                     {this.renderDetail()}
                 </Animated.View>
+
+                {/* Renders the navigation button */}
                 <TouchableWithoutFeedback onPress={this.startExitFlow.bind(this)}>
                     <Animated.View style={[styles.cloaseButton, {
                         transform: [{
@@ -228,6 +243,7 @@ class DetailScreen extends Component {
                         </View>
                     </Animated.View>
                 </TouchableWithoutFeedback>
+
             </View>
         )
     }
