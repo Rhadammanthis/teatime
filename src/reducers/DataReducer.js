@@ -6,74 +6,74 @@ import {
     WOW,
     KOLIBRI,
     GANGVERK,
-    UPDATE_COORDS,
-    SET_SELECTED,
-    RECORD_SIZE,
+    UPDATE_TRANSLATION_TARGET,
+    SET_SELECTED_ELEMENT,
+    SAVE_ELEMENT_SIZE,
     FETCH_COMPANY_DATA,
-    SELECTION_POSITON,
+    SAVE_SELECTED_ELEMENT_POSITION,
     RESET_VIEWS,
-    SAVE_POSITION
+    SAVE_ELEMENTS_POSITION
 } from '../actions/types'
 
 const INITIAL_STATE = {
     wow: {
         color: 'rgba(154,37,41,1)',
-        finalX: 0,
-        finalY: 0,
-        positionX: 0,
-        positionY: 0,
+        translationTargetX: 0,
+        translationTargetY: 0,
+        elementPositonX: 0,
+        elementPositonY: 0,
         name: "WOW",
         image: require('../assets/wow.png'),
-        anim: new Animated.ValueXY(),
-        extraAnim: new Animated.Value(0),
+        animTranslation: new Animated.ValueXY(),
+        animScale: new Animated.Value(0),
         z: 10
     },
     teatime: {
         color: 'rgba(241,64,92,1)',
-        finalX: 0,
-        finalY: 0,
-        positionX: 0,
-        positionY: 0,
+        translationTargetX: 0,
+        translationTargetY: 0,
+        elementPositonX: 0,
+        elementPositonY: 0,
         name: "Teatime",
         image: require('../assets/teatime.png'),
-        anim: new Animated.ValueXY(),
-        extraAnim: new Animated.Value(0),
+        animTranslation: new Animated.ValueXY(),
+        animScale: new Animated.Value(0),
         z: 10
     },
     kolibri: {
         color: 'rgba=(38,67,75,1)',
-        finalX: 0,
-        finalY: 0,
-        positionX: 0,
-        positionY: 0,
+        translationTargetX: 0,
+        translationTargetY: 0,
+        elementPositonX: 0,
+        elementPositonY: 0,
         name: "Kolibri",
         image: require('../assets/kolibri.png'),
-        anim: new Animated.ValueXY(),
-        extraAnim: new Animated.Value(0),
+        animTranslation: new Animated.ValueXY(),
+        animScale: new Animated.Value(0),
         z: 10
     },
     gangverk: {
         color: 'rgba(171,201,175,1)',
-        finalX: 0,
-        finalY: 0,
-        positionX: 0,
-        positionY: 0,
+        translationTargetX: 0,
+        translationTargetY: 0,
+        elementPositonX: 0,
+        elementPositonY: 0,
         name: "Gangverk",
         image: require('../assets/gangverk.png'),
-        anim: new Animated.ValueXY(),
-        extraAnim: new Animated.Value(0),
+        animTranslation: new Animated.ValueXY(),
+        animScale: new Animated.Value(0),
         z: 10
     },
     company: null,
     coordsUpdated: false,
     selection: "",
     scale: new Animated.Value(1),
-    buttonWidth: 0,
-    buttonHeight: 0,
+    elementWidth: 0,
+    elementHeight: 0,
     fetchedData: {},
     fetchedFinished: false,
-    centerX: 0,
-    centerY: 0,
+    selectedElemntPositionX: 0,
+    selectedElemntPositionY: 0,
     shouldReverse: false,
     rgba: ''
 };
@@ -88,27 +88,27 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, company: state.kolibri }
         case GANGVERK:
             return { ...state, company: state.gangverk }
-        case UPDATE_COORDS:
+        case UPDATE_TRANSLATION_TARGET:
             return {
                 ...state,
-                teatime: { ...state.teatime, finalX: action.payload.teatime.x, finalY: action.payload.teatime.y, z: action.payload.teatime.z ? 11 : 10 },
-                wow: { ...state.wow, finalX: action.payload.wow.x, finalY: action.payload.wow.y, z: action.payload.wow.z ? 11 : 10 },
-                kolibri: { ...state.kolibri, finalX: action.payload.kolibri.x, finalY: action.payload.kolibri.y, z: action.payload.kolibri.z ? 11 : 10 },
-                gangverk: { ...state.gangverk, finalX: action.payload.gangverk.x, finalY: action.payload.gangverk.y, z: action.payload.gangverk.z ? 11 : 10 },
+                teatime: { ...state.teatime, translationTargetX: action.payload.teatime.x, translationTargetY: action.payload.teatime.y, z: action.payload.teatime.z ? 11 : 10 },
+                wow: { ...state.wow, translationTargetX: action.payload.wow.x, translationTargetY: action.payload.wow.y, z: action.payload.wow.z ? 11 : 10 },
+                kolibri: { ...state.kolibri, translationTargetX: action.payload.kolibri.x, translationTargetY: action.payload.kolibri.y, z: action.payload.kolibri.z ? 11 : 10 },
+                gangverk: { ...state.gangverk, translationTargetX: action.payload.gangverk.x, translationTargetY: action.payload.gangverk.y, z: action.payload.gangverk.z ? 11 : 10 },
                 coordsUpdated: true
             }
-        case SAVE_POSITION:
+        case SAVE_ELEMENTS_POSITION:
             switch (action.payload.type) {
                 case TEATIME:
-                    return { ...state, teatime: { ...state.teatime, positionX: action.payload.x, positionY: action.payload.y, } }
+                    return { ...state, teatime: { ...state.teatime, elementPositonX: action.payload.x, elementPositonY: action.payload.y, } }
                 case WOW:
-                    return { ...state, wow: { ...state.wow, positionX: action.payload.x, positionY: action.payload.y, } }
+                    return { ...state, wow: { ...state.wow, elementPositonX: action.payload.x, elementPositonY: action.payload.y, } }
                 case KOLIBRI:
-                    return { ...state, kolibri: { ...state.kolibri, positionX: action.payload.x, positionY: action.payload.y, } }
+                    return { ...state, kolibri: { ...state.kolibri, elementPositonX: action.payload.x, elementPositonY: action.payload.y, } }
                 case GANGVERK:
-                    return { ...state, gangverk: { ...state.gangverk, positionX: action.payload.x, positionY: action.payload.y, } }
+                    return { ...state, gangverk: { ...state.gangverk, elementPositonX: action.payload.x, elementPositonY: action.payload.y, } }
             }
-        case SET_SELECTED:
+        case SET_SELECTED_ELEMENT:
             var rgba = ''
             switch (action.payload) {
                 case TEATIME:
@@ -121,12 +121,12 @@ export default (state = INITIAL_STATE, action) => {
                     rgba = 'rgba(171,201,175,1)'
             }
             return { ...state, selection: action.payload, shouldReverse: false, rgba: rgba }
-        case RECORD_SIZE:
-            return { ...state, buttonWidth: action.payload.width, buttonHeight: action.payload.height }
+        case SAVE_ELEMENT_SIZE:
+            return { ...state, elementWidth: action.payload.width, elementHeight: action.payload.height }
         case FETCH_COMPANY_DATA:
             return { ...state, fetchedData: action.payload, fetchedFinished: true }
-        case SELECTION_POSITON:
-            return { ...state, centerX: action.payload.x, centerY: action.payload.y }
+        case SAVE_SELECTED_ELEMENT_POSITION:
+            return { ...state, selectedElemntPositionX: action.payload.x, selectedElemntPositionY: action.payload.y }
         case RESET_VIEWS:
             return {
                 ...state,

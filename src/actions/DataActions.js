@@ -3,13 +3,13 @@ import {
     WOW,
     KOLIBRI,
     GANGVERK,
-    UPDATE_COORDS,
-    SET_SELECTED,
-    RECORD_SIZE,
+    UPDATE_TRANSLATION_TARGET,
+    SET_SELECTED_ELEMENT,
+    SAVE_ELEMENT_SIZE,
     FETCH_COMPANY_DATA,
-    SELECTION_POSITON,
+    SAVE_SELECTED_ELEMENT_POSITION,
     RESET_VIEWS,
-    SAVE_POSITION
+    SAVE_ELEMENTS_POSITION
 } from '../actions/types'
 import axios from 'axios'
 
@@ -25,10 +25,10 @@ export const resetView = () => {
     }
 }
 
-export const savePosition = (type, x, y, height) => {
+export const saveElementsPosition = (type, x, y, height) => {
 
+    //Manual calibration of elemt position
     switch (type) {
-
         case KOLIBRI:
             y += height + 10
             break;
@@ -38,47 +38,46 @@ export const savePosition = (type, x, y, height) => {
     }
 
     return {
-        type: SAVE_POSITION,
+        type: SAVE_ELEMENTS_POSITION,
         payload: { type: type, x: x, y: y }
     }
 }
 
-export const saveSelectionPosition = (type, x, y, width, height) => {
+export const saveSelectedElementsPosition = (type, x, y, width, height) => {
 
-    var centerX, centerY
+    var selectedElemntPositionX, selectedElemntPositionY
+    const marginOffset = 10
+    
+    //Manual calibration of elemt position due to lack of documentation fro the onLayout method
     switch (type) {
         case TEATIME:
-
-            centerX = x
-            centerY = y
-
+            selectedElemntPositionX = x
+            selectedElemntPositionY = y
             break;
         case WOW:
-
-            centerX = x - (width / 2) - 10
-            centerY = y
+            selectedElemntPositionX = x - (width / 2) - marginOffset
+            selectedElemntPositionY = y
             break;
         case KOLIBRI:
-
-            centerX = x
-            centerY = y + (height / 2) + 10
+            selectedElemntPositionX = x
+            selectedElemntPositionY = y + (height / 2) + marginOffset
             break;
         case GANGVERK:
-            centerX = x - (width / 2) - 10
-            centerY = y + (height / 2) + 10
+            selectedElemntPositionX = x - (width / 2) - marginOffset
+            selectedElemntPositionY = y + (height / 2) + marginOffset
             break;
     }
 
     return {
-        type: SELECTION_POSITON,
-        payload: { x: centerX, y: centerY }
+        type: SAVE_SELECTED_ELEMENT_POSITION,
+        payload: { x: selectedElemntPositionX, y: selectedElemntPositionY }
     }
 }
 
-export const recordSize = (width, height) => {
+export const saveElementSize = (width, height) => {
     console.log('Card size w/h', width, height)
     return {
-        type: RECORD_SIZE,
+        type: SAVE_ELEMENT_SIZE,
         payload: { width: width, height: height }
     }
 }
@@ -99,7 +98,7 @@ export const fetchCompanyData = (type) => {
 
 }
 
-export const updateTargetCoordinates = (type, buttons) => {
+export const updateTranslationTargetCoordinates = (type, buttons) => {
 
     var coordinates = {}
     const marginOffset = 20;
@@ -109,16 +108,16 @@ export const updateTargetCoordinates = (type, buttons) => {
 
             coordinates.teatime = { x: 0, y: 0, z: true }
 
-            var resultant = calculateResultant(buttons.teatime.positionX, buttons.teatime.positionY,
-                buttons.wow.positionX, buttons.wow.positionY)
+            var resultant = calculateResultant(buttons.teatime.elementPositonX, buttons.teatime.elementPositonY,
+                buttons.wow.elementPositonX, buttons.wow.elementPositonY)
             coordinates.wow = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.teatime.positionX, buttons.teatime.positionY,
-                buttons.kolibri.positionX, buttons.kolibri.positionY)
+            var resultant = calculateResultant(buttons.teatime.elementPositonX, buttons.teatime.elementPositonY,
+                buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY)
             coordinates.kolibri = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.teatime.positionX, buttons.teatime.positionY,
-                buttons.gangverk.positionX, buttons.gangverk.positionY)
+            var resultant = calculateResultant(buttons.teatime.elementPositonX, buttons.teatime.elementPositonY,
+                buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY)
             coordinates.gangverk = { x: resultant.x, y: resultant.y }
 
             break;
@@ -126,16 +125,16 @@ export const updateTargetCoordinates = (type, buttons) => {
 
             coordinates.wow = { x: 0, y: 0, z: true }
 
-            var resultant = calculateResultant(buttons.wow.positionX, buttons.wow.positionY,
-                buttons.teatime.positionX, buttons.teatime.positionY)
+            var resultant = calculateResultant(buttons.wow.elementPositonX, buttons.wow.elementPositonY,
+                buttons.teatime.elementPositonX, buttons.teatime.elementPositonY)
             coordinates.teatime = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.wow.positionX, buttons.wow.positionY,
-                buttons.kolibri.positionX, buttons.kolibri.positionY)
+            var resultant = calculateResultant(buttons.wow.elementPositonX, buttons.wow.elementPositonY,
+                buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY)
             coordinates.kolibri = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.wow.positionX, buttons.wow.positionY,
-                buttons.gangverk.positionX, buttons.gangverk.positionY)
+            var resultant = calculateResultant(buttons.wow.elementPositonX, buttons.wow.elementPositonY,
+                buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY)
             coordinates.gangverk = { x: resultant.x, y: resultant.y }
 
             break;
@@ -143,16 +142,16 @@ export const updateTargetCoordinates = (type, buttons) => {
 
             coordinates.kolibri = { x: 0, y: 0, z: true }
 
-            var resultant = calculateResultant(buttons.kolibri.positionX, buttons.kolibri.positionY,
-                buttons.wow.positionX, buttons.wow.positionY)
+            var resultant = calculateResultant(buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY,
+                buttons.wow.elementPositonX, buttons.wow.elementPositonY)
             coordinates.wow = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.kolibri.positionX, buttons.kolibri.positionY,
-                buttons.teatime.positionX, buttons.teatime.positionY)
+            var resultant = calculateResultant(buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY,
+                buttons.teatime.elementPositonX, buttons.teatime.elementPositonY)
             coordinates.teatime = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.kolibri.positionX, buttons.kolibri.positionY,
-                buttons.gangverk.positionX, buttons.gangverk.positionY)
+            var resultant = calculateResultant(buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY,
+                buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY)
             coordinates.gangverk = { x: resultant.x, y: resultant.y }
 
             break;
@@ -160,23 +159,23 @@ export const updateTargetCoordinates = (type, buttons) => {
             
         coordinates.gangverk = { x: 0, y: 0, z: true }
 
-            var resultant = calculateResultant(buttons.gangverk.positionX, buttons.gangverk.positionY,
-                buttons.wow.positionX, buttons.wow.positionY)
+            var resultant = calculateResultant(buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY,
+                buttons.wow.elementPositonX, buttons.wow.elementPositonY)
             coordinates.wow = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.gangverk.positionX, buttons.gangverk.positionY,
-                buttons.teatime.positionX, buttons.teatime.positionY)
+            var resultant = calculateResultant(buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY,
+                buttons.teatime.elementPositonX, buttons.teatime.elementPositonY)
             coordinates.teatime = { x: resultant.x, y: resultant.y }
 
-            var resultant = calculateResultant(buttons.gangverk.positionX, buttons.gangverk.positionY,
-                buttons.kolibri.positionX, buttons.kolibri.positionY)
+            var resultant = calculateResultant(buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY,
+                buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY)
             coordinates.kolibri = { x: resultant.x, y: resultant.y }
             
             break;
     }
 
     return {
-        type: UPDATE_COORDS,
+        type: UPDATE_TRANSLATION_TARGET,
         payload: coordinates
     }
 
@@ -186,9 +185,9 @@ calculateResultant = (Px, Py, Qx, Qy) => {
     return { x: Px - Qx, y: Py - Qy }
 }
 
-export const setSelectedButton = (type) => {
+export const selectElement = (type) => {
     return {
-        type: SET_SELECTED,
+        type: SET_SELECTED_ELEMENT,
         payload: type
     }
 }

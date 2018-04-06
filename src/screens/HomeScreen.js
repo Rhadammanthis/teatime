@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Platform, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
-import { companySelected, updatePosition, saveSelectionPosition, resetView, finishReverseFlow } from './actions'
+import { companySelected, updatePosition, saveSelectionPosition, resetView, finishReverseFlow } from '../actions'
 import {
 	TEATIME_POSSITION,
 	WOW_POSSITION,
@@ -11,11 +11,11 @@ import {
 	WOW,
 	KOLIBRI,
 	GANGVERK
-} from './actions/types'
-import Button from './components/Button';
+} from '../actions/types'
+import CompanyComponent from '../components/CompanyComponent';
 
 
-class Home extends Component {
+class HomeScreen extends Component {
 
 	// spin = this.state.spinValue.interpolate({
 	// 	inputRange: [0, 1],
@@ -92,12 +92,12 @@ class Home extends Component {
 				<View style={styles.statusBarBackground} />
 				<View style={{ flex: 1, flexDirection: 'column', marginTop: 10 }}>
 					<View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
-						<Button type={TEATIME} />
-						<Button type={WOW} />
+						<CompanyComponent type={TEATIME} />
+						<CompanyComponent type={WOW} />
 					</View>
 					<View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
-						<Button type={KOLIBRI} />
-						<Button type={GANGVERK} />
+						<CompanyComponent type={KOLIBRI} />
+						<CompanyComponent type={GANGVERK} />
 					</View>
 				</View>
 				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
@@ -143,4 +143,4 @@ const mapStateToProps = ({ home, data }) => {
 	};
 };
 
-export default connect(mapStateToProps, { saveSelectionPosition, resetView, finishReverseFlow })(Home);
+export default connect(mapStateToProps, { saveSelectionPosition, resetView, finishReverseFlow })(HomeScreen);

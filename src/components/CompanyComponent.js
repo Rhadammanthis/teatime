@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Animated, TouchableWithoutFeedback, Easing, Dimensions } from 'react-native';
-import { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition, savePosition } from '../actions'
+import { getCompanyData, updateTranslationTargetCoordinates, selectElement, startHomeButtonAnim, goToDetail, saveElementSize, fetchCompanyData, saveSelectedElementsPosition, saveElementsPosition } from '../actions'
 import { TEATIME, KOLIBRI, GANGVERK, WOW } from '../actions/types';
 
-class Button extends Component {
+class CompanyComponent extends Component {
 
     company = null;
 
@@ -19,17 +19,17 @@ class Button extends Component {
             x: e.nativeEvent.layout.x,
             y: e.nativeEvent.layout.y
         })
-        this.props.recordSize(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
+        this.props.saveElementSize(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
 
-        this.props.savePosition(this.props.type, e.nativeEvent.layout.x, e.nativeEvent.layout.y, e.nativeEvent.layout.height)
+        this.props.saveElementsPosition(this.props.type, e.nativeEvent.layout.x, e.nativeEvent.layout.y, e.nativeEvent.layout.height)
 
     }
 
     onClick() {
         this.props.fetchCompanyData(this.props.type)
-        this.props.setSelectedButton(this.props.type)
-        this.props.saveSelectionPosition(this.props.type, this.state.x, this.state.y, this.state.width, this.state.height)
-        this.props.updateTargetCoordinates(this.props.type, {teatime: this.props.teatime, wow: this.props.wow, kolibri: this.props.kolibri, gangverk: this.props.gangverk})
+        this.props.selectElement(this.props.type)
+        this.props.saveSelectedElementsPosition(this.props.type, this.state.x, this.state.y, this.state.width, this.state.height)
+        this.props.updateTranslationTargetCoordinates(this.props.type, {teatime: this.props.teatime, wow: this.props.wow, kolibri: this.props.kolibri, gangverk: this.props.gangverk})
     }
 
     initAnimationFlow() {
@@ -39,17 +39,17 @@ class Button extends Component {
         this.props.startHomeButtonAnim();
 
         Animated.parallel([
-            Animated.timing(this.company.anim.x, {
+            Animated.timing(this.company.animTranslation.x, {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.back()
             }),
-            Animated.timing(this.company.anim.y, {
+            Animated.timing(this.company.animTranslation.y, {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.back()
             }),
-            Animated.timing(this.company.extraAnim, {
+            Animated.timing(this.company.animScale, {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.out(Easing.cubic)
@@ -57,6 +57,7 @@ class Button extends Component {
         ]).start(onComplete = () => {
         });
 
+        //Special animation for the component that was selected
         if (this.props.selection === this.props.type) {
 
             Animated.sequence([
@@ -83,17 +84,17 @@ class Button extends Component {
 
     reverseAnims(){
         Animated.parallel([
-            Animated.timing(this.company.anim.x, {
+            Animated.timing(this.company.animTranslation.x, {
                 toValue: 0,
                 duration: 400,
                 easing: Easing.out(Easing.quad)
             }),
-            Animated.timing(this.company.anim.y, {
+            Animated.timing(this.company.animTranslation.y, {
                 toValue: 0,
                 duration: 400,
                 easing: Easing.out(Easing.quad)
             }),
-            Animated.timing(this.company.extraAnim, {
+            Animated.timing(this.company.animScale, {
                 toValue: 0,
                 duration: 400,
                 easing: Easing.in(Easing.cubic)
@@ -134,20 +135,20 @@ class Button extends Component {
                 <Animated.View onLayout={this.onLayout} style={[styles.button, {
                     elevation: this.company.z, margin: 10,
                     transform: [{
-                            translateX: this.company.anim.x.interpolate({
+                            translateX: this.company.animTranslation.x.interpolate({
                                 inputRange: [0, 1],
-                                outputRange: [0, this.company.finalX]
+                                outputRange: [0, this.company.translationTargetX]
                             })
                         }, 
                         {
-                            translateY: this.company.anim.y.interpolate({
+                            translateY: this.company.animTranslation.y.interpolate({
                                 inputRange: [0, 1],
-                                outputRange: [0, this.company.finalY]
+                                outputRange: [0, this.company.translationTargetY]
                             })
                         },
                         this.props.selection !== this.props.type ?
                             {
-                                scale: this.company.extraAnim.interpolate({
+                                scale: this.company.animScale.interpolate({
                                     inputRange: [0, 1],
                                     outputRange: [1, 0.65]
                                 })
@@ -188,7 +189,6 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
-        // margin: 10,
         borderRadius: 5,
         shadowColor: '#000',
         backgroundColor: '#FFF',
@@ -208,6 +208,6 @@ const mapStateToProps = ({ data }) => {
     };
 };
 
-export default connect(mapStateToProps, { getCompanyData, updateTargetCoordinates, setSelectedButton, 
-    startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition,
-    savePosition })(Button);
+export default connect(mapStateToProps, { getCompanyData, updateTranslationTargetCoordinates, selectElement, 
+    startHomeButtonAnim, goToDetail, saveElementSize, fetchCompanyData, saveSelectedElementsPosition,
+    saveElementsPosition })(CompanyComponent);

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Platform, TouchableWithoutFeedback, Dimensions, Animated, Easing } from 'react-native';
-import { TEATIME, KOLIBRI, GANGVERK, WOW } from './actions/types';
-import { goToHome, resetView } from './actions'
-import Button from './components/Button';
+import { TEATIME, KOLIBRI, GANGVERK, WOW } from '../actions/types';
+import { goToHome, resetView } from '../actions'
 
-class Detail extends Component {
+class DetailScreen extends Component {
 
     company = null;
 
@@ -19,20 +18,20 @@ class Detail extends Component {
 
     componentDidMount() {
         this.setState({
-            screenCenterX: (Dimensions.get('window').width / 2) - (this.props.buttonWidth / 2),
-            screenCenterY: (Dimensions.get('window').height / 2) - (this.props.buttonHeight * 1.5),
+            screenCenterX: (Dimensions.get('window').width / 2) - (this.props.elementWidth / 2),
+            screenCenterY: (Dimensions.get('window').height / 2) - (this.props.elementHeight * 1.5),
         }, () => {
 
             Animated.parallel([
                 Animated.timing(this.state.animImageTranslation.x, {
                     toValue: 1,
                     duration: 700,
-                    easing: Easing.in(Easing.quad)
+                    easing: Easing.back()
                 }),
                 Animated.timing(this.state.animImageTranslation.y, {
                     toValue: 1,
                     duration: 700,
-                    easing: Easing.in(Easing.quad)
+                    easing: Easing.back()
                 }),
                 Animated.stagger(200, [
                     //Translation
@@ -163,33 +162,33 @@ class Detail extends Component {
 
     render() {
 
-        var resultant = this.calculateResultant(this.state.screenCenterX, this.state.screenCenterY, this.props.centerX, this.props.centerY)
+        var resultant = this.calculateResultant(this.state.screenCenterX, this.state.screenCenterY, this.props.selectedElemntPositionX, this.props.selectedElemntPositionY)
 
         return (
             <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                 <Animated.View style={[styles.button, {
-                    height: this.props.buttonHeight,
-                    width: this.props.buttonWidth,
-                    left: this.props.centerX,
-                    top: this.props.centerY,
+                    height: this.props.elementHeight,
+                    width: this.props.elementWidth,
+                    left: this.props.selectedElemntPositionX,
+                    top: this.props.selectedElemntPositionY,
                     transform: [{
                         translateX: this.state.animImageTranslation.x.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [this.props.centerX, resultant.x]
+                            outputRange: [this.props.selectedElemntPositionX, resultant.x]
                         })
                     },
                     {
                         translateY: this.state.animImageTranslation.y.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [this.props.centerY, resultant.y]
+                            outputRange: [this.props.selectedElemntPositionY, resultant.y]
                         })
                     }]
                 }]}>
                     {this.renderButton()}
                 </Animated.View>
                 <Animated.View style={[styles.button, {
-                    height: this.props.buttonHeight,
-                    width: this.props.buttonWidth,
+                    height: this.props.elementHeight,
+                    width: this.props.elementWidth,
                     opacity: this.state.animInfoBox.x,
                     transform: [{
                         translateY: this.state.animInfoBox.y.interpolate({
@@ -259,11 +258,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ data }) => {
 
-    const { teatime, wow, kolibri, gangverk, selection, buttonWidth, buttonHeight, fetchedData, fetchedFinished, centerX, centerY } = data;
+    const { teatime, wow, kolibri, gangverk, selection, elementWidth, elementHeight, fetchedData, fetchedFinished, selectedElemntPositionX, selectedElemntPositionY } = data;
 
     return {
-        teatime, wow, kolibri, gangverk, selection, buttonWidth, buttonHeight, fetchedData, fetchedFinished, centerX, centerY
+        teatime, wow, kolibri, gangverk, selection, elementWidth, elementHeight, fetchedData, fetchedFinished, selectedElemntPositionX, selectedElemntPositionY
     };
 };
 
-export default connect(mapStateToProps, { goToHome, resetView })(Detail);
+export default connect(mapStateToProps, { goToHome, resetView })(DetailScreen);
