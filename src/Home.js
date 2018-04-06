@@ -59,7 +59,7 @@ class Home extends Component {
 
 	render() {
 
-		if(this.props.shouldReverse){
+		if (this.props.shouldReverse) {
 			console.log('SHOULD REVRSE!Q!!!!!')
 
 			this.props.finishReverseFlow()
@@ -83,17 +83,14 @@ class Home extends Component {
 				),
 			]).start()
 		}
-		
+
 		if (this.props.startAnim)
 			this.startAnimationFlow()
-
-		// if (this.props.selection)
-		// 	this.measureSelectedButton()
 
 		return (
 			<View style={styles.container}>
 				<View style={styles.statusBarBackground} />
-				<View style={{ flex: 1, flexDirection: 'column' }}>
+				<View style={{ flex: 1, flexDirection: 'column', marginTop: 10 }}>
 					<View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
 						<Button type={TEATIME} />
 						<Button type={WOW} />
@@ -132,8 +129,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	statusBarBackground: {
-		height: (Platform.OS === 'ios') ? 20 : 10, //this is just to test if the platform is iOS to give it a height of 20, else, no height (Android apps have their own status bar)
-		// height: 20,
+		height: (Platform.OS === 'ios') ? 20 : 0,
 		backgroundColor: "white",
 	}
 });
@@ -141,10 +137,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({ home, data }) => {
 
 	const { startAnim, anim, fade, shouldReverse } = home;
-	const { selection } = data
 
 	return {
-		startAnim, anim, fade, selection, shouldReverse
+		startAnim, anim, fade, shouldReverse
 	};
 };
 

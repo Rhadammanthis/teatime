@@ -19,3 +19,4 @@ export const SET_SELECTED = "set_selected"
 export const RECORD_SIZE = "record_size"
 export const SELECTION_POSITON = "selection_position"
 export const FETCH_COMPANY_DATA = "fetch_company_data"
+export const SAVE_POSITION = "save_position";

@@ -26,25 +26,25 @@ class Detail extends Component {
             Animated.parallel([
                 Animated.timing(this.state.anim.x, {
                     toValue: 1,
-                    duration: 900,
+                    duration: 700,
                     easing: Easing.in(Easing.quad)
                 }),
                 Animated.timing(this.state.anim.y, {
                     toValue: 1,
-                    duration: 900,
+                    duration: 700,
                     easing: Easing.in(Easing.quad)
                 }),
                 Animated.stagger(200, [
                     //Translation
                     Animated.timing(this.state.animInfo.x, {
                         toValue: 1,
-                        duration: 900,
+                        duration: 700,
                         easing: Easing.in(Easing.quad)
                     }),
                     //Fade
                     Animated.timing(this.state.animInfo.y, {
                         toValue: 1,
-                        duration: 900,
+                        duration: 700,
                         easing: Easing.in(Easing.quad)
                     }),
                 ]),
@@ -80,9 +80,6 @@ class Detail extends Component {
                 break;
         }
 
-        // if(this.props.fetchedData)
-        //     console.log('Fetched data',this.props.fetchedData)
-
         if (this.props.selection)
             return (
                 <TouchableWithoutFeedback >
@@ -110,9 +107,11 @@ class Detail extends Component {
                     active = element
             });
 
+            console.log('RGBA',this.company.rgba)
+
             return (
                 <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ color: '#00000066', fontSize: 13, fontWeight: 'bold' }}>
+                    <Text style={{ color: this.company.color, fontSize: 13, fontWeight: 'bold' }}>
                         {active.sn}
                     </Text>
                     <Text style={{ color: '#00000066', fontSize: 13, fontWeight: 'bold', textAlign: 'center' }}>
@@ -139,18 +138,18 @@ class Detail extends Component {
             }),
             Animated.timing(this.state.animInfo.x, {
                 toValue: 0,
-                duration: 500,
+                duration: 400,
                 easing: Easing.in(Easing.quad)
             }),
             Animated.parallel([
                 Animated.timing(this.state.anim.x, {
                     toValue: 0,
-                    duration: 900,
+                    duration: 400,
                     easing: Easing.in(Easing.quad)
                 }),
                 Animated.timing(this.state.anim.y, {
                     toValue: 0,
-                    duration: 900,
+                    duration: 400,
                     easing: Easing.in(Easing.quad)
                 }),
             ])
@@ -215,9 +214,11 @@ class Detail extends Component {
                     }]
                 }}>
                     <TouchableWithoutFeedback onPress={this.startExitFlow.bind(this)}>
-                        <Text>
-                            X
-                        </Text>
+                        <View>
+                            <Text>
+                                X
+                            </Text>
+                        </View>
                     </TouchableWithoutFeedback>
                 </Animated.View>
             </View>
@@ -262,4 +263,4 @@ const mapStateToProps = ({ data }) => {
     };
 };
 
-export default connect(mapStateToProps, {goToHome, resetView})(Detail);
+export default connect(mapStateToProps, { goToHome, resetView })(Detail);

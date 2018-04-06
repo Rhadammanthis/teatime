@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Animated, TouchableWithoutFeedback, Easing, Dimensions } from 'react-native';
-import { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition } from '../actions'
+import { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition, savePosition } from '../actions'
 import { TEATIME, KOLIBRI, GANGVERK, WOW } from '../actions/types';
 
 class Button extends Component {
@@ -21,39 +21,40 @@ class Button extends Component {
         })
         this.props.recordSize(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
 
+        this.props.savePosition(this.props.type, e.nativeEvent.layout.x, e.nativeEvent.layout.y, e.nativeEvent.layout.height)
+
     }
 
     onClick() {
         this.props.fetchCompanyData(this.props.type)
         this.props.setSelectedButton(this.props.type)
         this.props.saveSelectionPosition(this.props.type, this.state.x, this.state.y, this.state.width, this.state.height)
-        this.props.updateTargetCoordinates(this.props.type, this.state.width, this.state.height)
+        this.props.updateTargetCoordinates(this.props.type, {teatime: this.props.teatime, wow: this.props.wow, kolibri: this.props.kolibri, gangverk: this.props.gangverk})
     }
 
     initAnimationFlow() {
 
-        console.log('Selected', this.props.selection)
+        console.log('Preparing to animate', this.company)
 
         this.props.startHomeButtonAnim();
 
         Animated.parallel([
             Animated.timing(this.company.anim.x, {
                 toValue: 1,
-                duration: 900,
+                duration: 400,
                 easing: Easing.in(Easing.quad)
             }),
             Animated.timing(this.company.anim.y, {
                 toValue: 1,
-                duration: 900,
+                duration: 400,
                 easing: Easing.in(Easing.quad)
             }),
             Animated.timing(this.company.extraAnim, {
                 toValue: 1,
-                duration: 1300,
+                duration: 800,
                 easing: Easing.out(Easing.cubic)
             }),
         ]).start(onComplete = () => {
-            console.log('Finished')
         });
 
         if (this.props.selection === this.props.type) {
@@ -62,25 +63,21 @@ class Button extends Component {
                 Animated.timing(
                     this.props.scale, {
                         toValue: 1.1,
-                        duration: 600
+                        duration: 500
                     }
                 ),
                 Animated.stagger(100, [
                     Animated.timing(
                         this.props.scale, {
                             toValue: 1.0,
-                            duration: 500
+                            duration: 400
                         }
                     )
                 ])
             ]).start(onComplete = () => {
-                console.log('Finished scale')
                 this.props.goToDetail()
             })
         }
-
-        console.log("User Selection: ", this.props.selection)
-        console.log("Component Type: ", this.props.type)
 
     }
 
@@ -88,17 +85,17 @@ class Button extends Component {
         Animated.parallel([
             Animated.timing(this.company.anim.x, {
                 toValue: 0,
-                duration: 700,
+                duration: 400,
                 easing: Easing.out(Easing.quad)
             }),
             Animated.timing(this.company.anim.y, {
                 toValue: 0,
-                duration: 700,
+                duration: 400,
                 easing: Easing.out(Easing.quad)
             }),
             Animated.timing(this.company.extraAnim, {
                 toValue: 0,
-                duration: 700,
+                duration: 400,
                 easing: Easing.in(Easing.cubic)
             }),
         ]).start(onComplete = () => {
@@ -136,13 +133,13 @@ class Button extends Component {
             return (
                 <Animated.View onLayout={this.onLayout} style={[styles.button, {
                     elevation: this.company.z, margin: 10,
-                    transform: [
-                        {
+                    transform: [{
                             translateX: this.company.anim.x.interpolate({
                                 inputRange: [0, 1],
                                 outputRange: [0, this.company.finalX]
                             })
-                        }, {
+                        }, 
+                        {
                             translateY: this.company.anim.y.interpolate({
                                 inputRange: [0, 1],
                                 outputRange: [0, this.company.finalY]
@@ -191,7 +188,7 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
-        margin: 10,
+        // margin: 10,
         borderRadius: 5,
         shadowColor: '#000',
         backgroundColor: '#FFF',
@@ -211,4 +208,6 @@ const mapStateToProps = ({ data }) => {
     };
 };
 
-export default connect(mapStateToProps, { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition })(Button);
+export default connect(mapStateToProps, { getCompanyData, updateTargetCoordinates, setSelectedButton, 
+    startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition,
+    savePosition })(Button);
