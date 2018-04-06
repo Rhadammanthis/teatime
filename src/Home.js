@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Platform, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
-import { companySelected, updatePosition } from './actions'
+import { companySelected, updatePosition, saveSelectionPosition, resetView, finishReverseFlow } from './actions'
 import {
 	TEATIME_POSSITION,
 	WOW_POSSITION,
@@ -54,27 +54,51 @@ class Home extends Component {
 				)
 			])
 		]).start()
-		// Animated.timing(this.props.anim, {
-		// 	toValue: 1,
-		// 	duration: 500,
-		// 	easing: Easing.quad
-		// }).start()
+
 	}
 
 	render() {
 
+		if(this.props.shouldReverse){
+			console.log('SHOULD REVRSE!Q!!!!!')
+
+			this.props.finishReverseFlow()
+			this.props.resetView();
+
+			Animated.parallel([
+				Animated.timing(
+					this.props.fade,
+					{
+						toValue: 1,
+						duration: 200,
+					}
+				),
+				Animated.timing(
+					this.props.anim,
+					{
+						toValue: 1,
+						duration: 500
+					}
+
+				),
+			]).start()
+		}
+		
 		if (this.props.startAnim)
 			this.startAnimationFlow()
+
+		// if (this.props.selection)
+		// 	this.measureSelectedButton()
 
 		return (
 			<View style={styles.container}>
 				<View style={styles.statusBarBackground} />
 				<View style={{ flex: 1, flexDirection: 'column' }}>
-					<View style={{ flex: 1, flexDirection: 'row' }}>
+					<View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
 						<Button type={TEATIME} />
 						<Button type={WOW} />
 					</View>
-					<View style={{ flex: 1, flexDirection: 'row' }}>
+					<View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
 						<Button type={KOLIBRI} />
 						<Button type={GANGVERK} />
 					</View>
@@ -100,7 +124,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 	},
 	circleView: {
-		position: 'absolute',
 		width: 150,
 		height: 150,
 		backgroundColor: '#00000033',
@@ -115,13 +138,14 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapStateToProps = ({ home }) => {
+const mapStateToProps = ({ home, data }) => {
 
-	const { startAnim, anim, fade } = home;
+	const { startAnim, anim, fade, shouldReverse } = home;
+	const { selection } = data
 
 	return {
-		startAnim, anim, fade
+		startAnim, anim, fade, selection, shouldReverse
 	};
 };
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps, { saveSelectionPosition, resetView, finishReverseFlow })(Home);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, Text, View, Image, Animated, TouchableWithoutFeedback, Easing } from 'react-native';
-import { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim } from '../actions'
+import { StyleSheet, Text, View, Image, Animated, TouchableWithoutFeedback, Easing, Dimensions } from 'react-native';
+import { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition } from '../actions'
 import { TEATIME, KOLIBRI, GANGVERK, WOW } from '../actions/types';
 
 class Button extends Component {
@@ -9,18 +9,24 @@ class Button extends Component {
     company = null;
 
     componentDidMount() {
-        this.props.getCompanyData(this.props.type)
+        // this.props.getCompanyData(this.props.type)
     }
 
     onLayout = (e) => {
         this.setState({
             width: e.nativeEvent.layout.width,
             height: e.nativeEvent.layout.height,
+            x: e.nativeEvent.layout.x,
+            y: e.nativeEvent.layout.y
         })
+        this.props.recordSize(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
+
     }
 
     onClick() {
+        this.props.fetchCompanyData(this.props.type)
         this.props.setSelectedButton(this.props.type)
+        this.props.saveSelectionPosition(this.props.type, this.state.x, this.state.y, this.state.width, this.state.height)
         this.props.updateTargetCoordinates(this.props.type, this.state.width, this.state.height)
     }
 
@@ -43,33 +49,61 @@ class Button extends Component {
             }),
             Animated.timing(this.company.extraAnim, {
                 toValue: 1,
-                duration: 1000,
-                easing: Easing.out(Easing.circle)
+                duration: 1300,
+                easing: Easing.out(Easing.cubic)
             }),
-        ]).start(() => {
-
+        ]).start(onComplete = () => {
+            console.log('Finished')
         });
 
-        Animated.sequence([
-            Animated.timing(
-                this.props.scale, {
-                    toValue: 1.1,
-                    duration: 600
-                }
-            ),
-            Animated.stagger(100, [
+        if (this.props.selection === this.props.type) {
+
+            Animated.sequence([
                 Animated.timing(
                     this.props.scale, {
-                        toValue: 1.0,
-                        duration: 500
+                        toValue: 1.1,
+                        duration: 600
                     }
-                )
-            ])
-        ]).start()
+                ),
+                Animated.stagger(100, [
+                    Animated.timing(
+                        this.props.scale, {
+                            toValue: 1.0,
+                            duration: 500
+                        }
+                    )
+                ])
+            ]).start(onComplete = () => {
+                console.log('Finished scale')
+                this.props.goToDetail()
+            })
+        }
 
         console.log("User Selection: ", this.props.selection)
         console.log("Component Type: ", this.props.type)
 
+    }
+
+    reverseAnims(){
+        Animated.parallel([
+            Animated.timing(this.company.anim.x, {
+                toValue: 0,
+                duration: 700,
+                easing: Easing.out(Easing.quad)
+            }),
+            Animated.timing(this.company.anim.y, {
+                toValue: 0,
+                duration: 700,
+                easing: Easing.out(Easing.quad)
+            }),
+            Animated.timing(this.company.extraAnim, {
+                toValue: 0,
+                duration: 700,
+                easing: Easing.in(Easing.cubic)
+            }),
+        ]).start(onComplete = () => {
+            console.log('Finished')
+        });
     }
 
     render() {
@@ -90,6 +124,10 @@ class Button extends Component {
         }
 
         if (this.company !== null) {
+
+            if(this.props.shouldReverse){
+                this.reverseAnims()
+            }
 
             if (this.props.coordsUpdated) {
                 this.initAnimationFlow()
@@ -129,7 +167,7 @@ class Button extends Component {
                             justifyContent: 'center', flex: 1, flexDirection: 'column'
                         }}>
                             <Image style={{ flex: 1 }} source={this.company.image} resizeMode="contain" />
-                            <Text style={{ fontSize: 12, marginBottom: 10, color: '#00000066' }}>
+                            <Text style={{ fontSize: 13, marginBottom: 10, color: '#00000066' }}>
                                 {this.company.name}
                             </Text>
                         </View>
@@ -166,11 +204,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ data }) => {
 
-    const { teatime, wow, kolibri, gangverk, company, coordsUpdated, selection, scale } = data;
+    const { teatime, wow, kolibri, gangverk, company, coordsUpdated, selection, scale, shouldReverse } = data;
 
     return {
-        teatime, wow, kolibri, gangverk, company, coordsUpdated, selection, scale
+        teatime, wow, kolibri, gangverk, company, coordsUpdated, selection, scale, shouldReverse
     };
 };
 
-export default connect(mapStateToProps, { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim })(Button);
+export default connect(mapStateToProps, { getCompanyData, updateTargetCoordinates, setSelectedButton, startHomeButtonAnim, goToDetail, recordSize, fetchCompanyData, saveSelectionPosition })(Button);

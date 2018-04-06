@@ -7,7 +7,11 @@ import {
     KOLIBRI,
     GANGVERK,
     UPDATE_COORDS,
-    SET_SELECTED
+    SET_SELECTED,
+    RECORD_SIZE,
+    FETCH_COMPANY_DATA,
+    SELECTION_POSITON,
+    RESET_VIEWS
 } from '../actions/types'
 
 const INITIAL_STATE = {
@@ -50,7 +54,14 @@ const INITIAL_STATE = {
     company: null,
     coordsUpdated: false,
     selection: "",
-    scale: new Animated.Value(1)
+    scale: new Animated.Value(1),
+    buttonWidth: 0,
+    buttonHeight: 0,
+    fetchedData: {},
+    fetchedFinished: false,
+    centerX : 0,
+    centerY: 0,
+    shouldReverse: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -64,7 +75,6 @@ export default (state = INITIAL_STATE, action) => {
         case GANGVERK:
             return { ...state, company: state.gangverk }
         case UPDATE_COORDS:
-            console.log('Coordinates', action.payload)
             return {...state, 
                 teatime: {...state.teatime, finalX: action.payload.teatime.x, finalY: action.payload.teatime.y, z: action.payload.teatime.z ? 11 : 10 },
                 wow: {...state.wow, finalX: action.payload.wow.x, finalY: action.payload.wow.y, z: action.payload.wow.z ? 11 : 10},
@@ -73,7 +83,19 @@ export default (state = INITIAL_STATE, action) => {
                 coordsUpdated: true
             }
         case SET_SELECTED:
-            return { ...state, selection : action.payload }
+            return { ...state, selection : action.payload, shouldReverse: false }
+        case RECORD_SIZE:
+            return { ...state, buttonWidth: action.payload.width, buttonHeight: action.payload.height}
+        case FETCH_COMPANY_DATA:
+            return { ...state, fetchedData: action.payload, fetchedFinished: true }
+        case SELECTION_POSITON:
+            return {...state, centerX : action.payload.x, centerY : action.payload.y}
+        case RESET_VIEWS:
+            return {...state,
+                coordsUpdated: false,
+                selection: "",
+                shouldReverse: true
+            }
         default:
             return state;
     }
