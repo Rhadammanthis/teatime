@@ -17,15 +17,6 @@ import CompanyComponent from '../components/CompanyComponent';
 
 class HomeScreen extends Component {
 
-	// spin = this.state.spinValue.interpolate({
-	// 	inputRange: [0, 1],
-	// 	outputRange: ['0deg', '360deg']
-	// })
-
-	componentDidMount() {
-
-	}
-
 	startAnimationFlow() {
 		Animated.sequence([
 			Animated.timing(
@@ -33,6 +24,7 @@ class HomeScreen extends Component {
 				{
 					toValue: 1.2,
 					duration: 500,
+					useNativeDriver: true,
 				}
 
 			),
@@ -41,7 +33,8 @@ class HomeScreen extends Component {
 					this.props.anim,
 					{
 						toValue: 0.0,
-						duration: 500
+						duration: 500,
+						useNativeDriver: true,
 					}
 
 				),
@@ -50,6 +43,7 @@ class HomeScreen extends Component {
 					{
 						toValue: 0,
 						duration: 200,
+						useNativeDriver: true,
 					}
 				)
 			])
@@ -60,7 +54,6 @@ class HomeScreen extends Component {
 	render() {
 
 		if (this.props.shouldReverse) {
-			console.log('SHOULD REVRSE!Q!!!!!')
 
 			this.props.finishReverseFlow()
 			this.props.resetView();
@@ -71,13 +64,15 @@ class HomeScreen extends Component {
 					{
 						toValue: 1,
 						duration: 200,
+						useNativeDriver: true,
 					}
 				),
 				Animated.timing(
 					this.props.anim,
 					{
 						toValue: 1,
-						duration: 500
+						duration: 500,
+						useNativeDriver: true,
 					}
 
 				),

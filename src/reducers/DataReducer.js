@@ -41,7 +41,7 @@ const INITIAL_STATE = {
         z: 10
     },
     kolibri: {
-        color: 'rgba=(38,67,75,1)',
+        color: 'rgba(38,67,75,1)',
         translationTargetX: 0,
         translationTargetY: 0,
         elementPositonX: 0,
@@ -109,18 +109,7 @@ export default (state = INITIAL_STATE, action) => {
                     return { ...state, gangverk: { ...state.gangverk, elementPositonX: action.payload.x, elementPositonY: action.payload.y, } }
             }
         case SET_SELECTED_ELEMENT:
-            var rgba = ''
-            switch (action.payload) {
-                case TEATIME:
-                    rgba = 'rgba(241,64,92,1)'
-                case WOW:
-                    rgba = 'rgba(154,37,41,1)'
-                case KOLIBRI:
-                    rgba = 'rgba=(38,67,75,1)'
-                case GANGVERK:
-                    rgba = 'rgba(171,201,175,1)'
-            }
-            return { ...state, selection: action.payload, shouldReverse: false, rgba: rgba }
+            return { ...state, selection: action.payload, shouldReverse: false }
         case SAVE_ELEMENT_SIZE:
             return { ...state, elementWidth: action.payload.width, elementHeight: action.payload.height }
         case FETCH_COMPANY_DATA:

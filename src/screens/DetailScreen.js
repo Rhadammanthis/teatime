@@ -16,48 +16,57 @@ class DetailScreen extends Component {
         screenCenterY: 0
     }
 
+    shouldComponentUpdate(np, tp){
+        Animated.parallel([
+            Animated.timing(this.state.animImageTranslation.x, {
+                toValue: 1,
+                duration: 700,
+                easing: Easing.out(Easing.quad),
+                useNativeDriver: true,
+            }),
+            Animated.timing(this.state.animImageTranslation.y, {
+                toValue: 1,
+                duration: 700,
+                easing: Easing.back(),
+                useNativeDriver: true,
+            }),
+            Animated.stagger(200, [
+                //Translation
+                Animated.timing(this.state.animInfoBox.x, {
+                    toValue: 1,
+                    duration: 700,
+                    easing: Easing.in(Easing.quad),
+                    useNativeDriver: true,
+                }),
+                //Fade
+                Animated.timing(this.state.animInfoBox.y, {
+                    toValue: 1,
+                    duration: 700,
+                    easing: Easing.in(Easing.quad),
+                    useNativeDriver: true,
+                }),
+            ]),
+        ]).start(onComplete = () => {
+            console.log('Finished')
+            Animated.sequence([
+                Animated.delay(1500),
+                Animated.timing(this.state.animCloseButton, {
+                    toValue: 1,
+                    duration: 500,
+                    easing: Easing.out(Easing.quad),
+                    useNativeDriver: true,
+                })
+            ]).start()
+        });
+
+        return true
+    }
+
     componentDidMount() {
         this.setState({
             screenCenterX: (Dimensions.get('window').width / 2) - (this.props.elementWidth / 2),
             screenCenterY: (Dimensions.get('window').height / 2) - (this.props.elementHeight * 1.5),
         }, () => {
-
-            Animated.parallel([
-                Animated.timing(this.state.animImageTranslation.x, {
-                    toValue: 1,
-                    duration: 700,
-                    easing: Easing.back()
-                }),
-                Animated.timing(this.state.animImageTranslation.y, {
-                    toValue: 1,
-                    duration: 700,
-                    easing: Easing.back()
-                }),
-                Animated.stagger(200, [
-                    //Translation
-                    Animated.timing(this.state.animInfoBox.x, {
-                        toValue: 1,
-                        duration: 700,
-                        easing: Easing.in(Easing.quad)
-                    }),
-                    //Fade
-                    Animated.timing(this.state.animInfoBox.y, {
-                        toValue: 1,
-                        duration: 700,
-                        easing: Easing.in(Easing.quad)
-                    }),
-                ]),
-            ]).start(onComplete = () => {
-                console.log('Finished')
-                Animated.sequence([
-                    Animated.delay(1500),
-                    Animated.timing(this.state.animCloseButton, {
-                        toValue: 1,
-                        duration: 500,
-                        easing: Easing.out(Easing.quad)
-                    })
-                ]).start()
-            });
 
         })
     }
@@ -107,7 +116,7 @@ class DetailScreen extends Component {
                     active = element
             });
             return (
-                <View style={ styles.textLayout }>
+                <View style={styles.textLayout}>
                     <Text style={{ color: this.company.color, fontSize: 13, fontWeight: 'bold' }}>
                         {active.sn}
                     </Text>
@@ -127,29 +136,33 @@ class DetailScreen extends Component {
 
     //Retracks anims and bavigates back
     startExitFlow() {
-        
+
         //Plays animations in reverse
         Animated.sequence([
             Animated.timing(this.state.animCloseButton, {
                 toValue: 0,
                 duration: 500,
-                easing: Easing.in(Easing.quad)
+                easing: Easing.in(Easing.quad),
+                useNativeDriver: true,
             }),
             Animated.timing(this.state.animInfoBox.x, {
                 toValue: 0,
                 duration: 300,
-                easing: Easing.in(Easing.quad)
+                easing: Easing.in(Easing.quad),
+                useNativeDriver: true,
             }),
             Animated.parallel([
                 Animated.timing(this.state.animImageTranslation.x, {
                     toValue: 0,
                     duration: 400,
-                    easing: Easing.in(Easing.quad)
+                    easing: Easing.in(Easing.quad),
+                    useNativeDriver: true,
                 }),
                 Animated.timing(this.state.animImageTranslation.y, {
                     toValue: 0,
                     duration: 400,
-                    easing: Easing.in(Easing.quad)
+                    easing: Easing.in(Easing.quad),
+                    useNativeDriver: true,
                 }),
             ])
         ]).start(onComplete = () => {
@@ -199,22 +212,22 @@ class DetailScreen extends Component {
                 }]}>
                     {this.renderDetail()}
                 </Animated.View>
-                <Animated.View style={[styles.cloaseButton, {
-                    transform: [{
-                        translateY: this.state.animCloseButton.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [Dimensions.get('window').height, 250]
-                        })
-                    }]
-                }]}>
-                    <TouchableWithoutFeedback onPress={this.startExitFlow.bind(this)}>
+                <TouchableWithoutFeedback onPress={this.startExitFlow.bind(this)}>
+                    <Animated.View style={[styles.cloaseButton, {
+                        transform: [{
+                            translateY: this.state.animCloseButton.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [Dimensions.get('window').height, 250]
+                            })
+                        }]
+                    }]}>
                         <View>
                             <Text>
                                 X
                             </Text>
                         </View>
-                    </TouchableWithoutFeedback>
-                </Animated.View>
+                    </Animated.View>
+                </TouchableWithoutFeedback>
             </View>
         )
     }
@@ -250,10 +263,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    textLayout:{ flex: 1, 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center' }
+    textLayout: {
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
 });
 
 const mapStateToProps = ({ data }) => {

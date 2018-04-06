@@ -75,7 +75,6 @@ export const saveSelectedElementsPosition = (type, x, y, width, height) => {
 }
 
 export const saveElementSize = (width, height) => {
-    console.log('Card size w/h', width, height)
     return {
         type: SAVE_ELEMENT_SIZE,
         payload: { width: width, height: height }
@@ -89,10 +88,8 @@ export const fetchCompanyData = (type) => {
         axios.get(url)
             .then((response) => {
                 dispatch({ type: FETCH_COMPANY_DATA, payload: response });
-                console.log(response);
             })
             .catch((error) => {
-                console.log(error);
             });
     }
 

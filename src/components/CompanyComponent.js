@@ -42,17 +42,20 @@ class CompanyComponent extends Component {
             Animated.timing(this.company.animTranslation.x, {
                 toValue: 1,
                 duration: 700,
-                easing: Easing.back()
+                easing: Easing.back(),
+                useNativeDriver: true,
             }),
             Animated.timing(this.company.animTranslation.y, {
                 toValue: 1,
                 duration: 700,
-                easing: Easing.back()
+                easing: Easing.back(),
+                useNativeDriver: true,
             }),
             Animated.timing(this.company.animScale, {
                 toValue: 1,
                 duration: 700,
-                easing: Easing.out(Easing.cubic)
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
             }),
         ]).start(onComplete = () => {
         });
@@ -64,14 +67,16 @@ class CompanyComponent extends Component {
                 Animated.timing(
                     this.props.scale, {
                         toValue: 1.1,
-                        duration: 500
+                        duration: 500,
+                        useNativeDriver: true,
                     }
                 ),
                 Animated.stagger(100, [
                     Animated.timing(
                         this.props.scale, {
                             toValue: 1.0,
-                            duration: 450
+                            duration: 450,
+                            useNativeDriver: true,
                         }
                     )
                 ])
@@ -82,25 +87,39 @@ class CompanyComponent extends Component {
 
     }
 
+    /**
+     * There's a weird issue here. After trying the conventional optimization methods
+     * and not achieving the desire effect I opted to use 'the NativeDriver. Most of the
+     * anymations are working perfectly except for these right here.
+     * The intention was to return every ComapnyCOmponent to their initial place by simply
+     * reversing the animation but sometjing prevents it from even rendering resulting in a
+     * more than anti climatic snap...
+     * Removing the use of the NativeDriver altogether reduces the overall quality of the
+     * animations but manages to play these below.
+     * Well... wel... wel... 
+     */
+    
     reverseAnims(){
         Animated.parallel([
             Animated.timing(this.company.animTranslation.x, {
                 toValue: 0,
                 duration: 400,
-                easing: Easing.out(Easing.quad)
+                easing: Easing.out(Easing.quad),
+                useNativeDriver: true,
             }),
             Animated.timing(this.company.animTranslation.y, {
                 toValue: 0,
                 duration: 400,
-                easing: Easing.out(Easing.quad)
+                easing: Easing.out(Easing.quad),
+                useNativeDriver: true,
             }),
             Animated.timing(this.company.animScale, {
                 toValue: 0,
                 duration: 400,
-                easing: Easing.in(Easing.cubic)
+                easing: Easing.in(Easing.cubic),
+                useNativeDriver: true,
             }),
         ]).start(onComplete = () => {
-            console.log('Finished')
         });
     }
 
