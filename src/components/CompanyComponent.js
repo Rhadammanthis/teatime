@@ -167,14 +167,14 @@ class CompanyComponent extends Component {
                     elevation: this.company.z, margin: 10,
                     transform: [{
                             translateX: this.company.animTranslation.x.interpolate({
-                                inputRange: [0, 0.5 , 1],
-                                outputRange: [0, this.company.translationTargetX / 2, this.company.translationTargetX]
+                                inputRange: [0, 1],
+                                outputRange: [0, this.company.translationTarget.x]
                             })
                         }, 
                         {
                             translateY: this.company.animTranslation.y.interpolate({
-                                inputRange: [0, 0.5, 1],
-                                outputRange: [0, this.company.translationTargetY/2, this.company.translationTargetY]
+                                inputRange: [0, 1],
+                                outputRange: [0, this.company.translationTarget.y]
                             })
                         },
                         // Checks if the component is the one selected by the user. The scale animation varies depending

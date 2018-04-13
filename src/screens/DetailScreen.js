@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Platform, TouchableWithoutFeedback, Dimensions, Animated, Easing } from 'react-native';
 import { TEATIME, KOLIBRI, GANGVERK, WOW } from '../actions/types';
 import { goToHome, resetView } from '../actions'
+import { pointSubstraction } from '../util'
 
 class DetailScreen extends Component {
 
@@ -12,8 +13,7 @@ class DetailScreen extends Component {
         animImageTranslation: new Animated.ValueXY(),
         animInfoBox: new Animated.ValueXY(),
         animCloseButton: new Animated.Value(0),
-        screenCenterX: 0,
-        screenCenterY: 0
+        screenCenter: {x: 0, y: 0}
     }
 
     shouldComponentUpdate(np, tp) {
@@ -65,10 +65,12 @@ class DetailScreen extends Component {
 
     componentDidMount() {
 
-        //gets a refrence of the device's width and height
+        //Gets the position of the center of the screen with an offset to account for the button's top left corner
         this.setState({
-            screenCenterX: (Dimensions.get('window').width / 2) - (this.props.elementWidth / 2),
-            screenCenterY: (Dimensions.get('window').height / 2) - (this.props.elementHeight * 1.5),
+            screenCenter: {
+                x: (Dimensions.get('window').width / 2) - (this.props.elementWidth / 2),
+                y: (Dimensions.get('window').height / 2) - (this.props.elementHeight * 1.5)
+            }
         }, () => {
 
         })
@@ -184,7 +186,12 @@ class DetailScreen extends Component {
     render() {
 
         //vector in between the component's position and the center of the screen
-        var resultant = this.calculateResultant(this.state.screenCenterX, this.state.screenCenterY, this.props.selectedElemntPositionX, this.props.selectedElemntPositionY)
+        var resultant = pointSubstraction(this.state.screenCenter, this.props.selectedElemntPosition)
+
+        // var lel = pointSubstraction(this.state.screenCenter, { x: this.state.screenCenter.x, y: this.state.screenCenter.y + 30 })
+
+        // console.log('Resultant', resultant)
+        // console.log('Offset', lel)
 
         return (
             <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
@@ -193,18 +200,18 @@ class DetailScreen extends Component {
                 <Animated.View style={[styles.button, {
                     height: this.props.elementHeight,
                     width: this.props.elementWidth,
-                    left: this.props.selectedElemntPositionX,
-                    top: this.props.selectedElemntPositionY,
+                    left: this.props.selectedElemntPosition.x,
+                    top: this.props.selectedElemntPosition.y,
                     transform: [{
                         translateX: this.state.animImageTranslation.x.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [this.props.selectedElemntPositionX, resultant.x]
+                            outputRange: [this.props.selectedElemntPosition.x, resultant.x]
                         })
                     },
                     {
                         translateY: this.state.animImageTranslation.y.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [this.props.selectedElemntPositionY, resultant.y]
+                            outputRange: [this.props.selectedElemntPosition.y, resultant.y]
                         })
                     }]
                 }]}>
@@ -219,7 +226,7 @@ class DetailScreen extends Component {
                     transform: [{
                         translateY: this.state.animInfoBox.y.interpolate({
                             inputRange: [0, 1],
-                            outputRange: [this.state.screenCenterY, this.calculateResultant(this.state.screenCenterX, this.state.screenCenterY + 30, this.state.screenCenterX, this.state.screenCenterY).y]
+                            outputRange: [this.state.screenCenter.y, 30]
                         })
                     }]
                 }]}>
@@ -289,10 +296,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ data }) => {
 
-    const { teatime, wow, kolibri, gangverk, selection, elementWidth, elementHeight, fetchedData, fetchedFinished, selectedElemntPositionX, selectedElemntPositionY } = data;
+    const { teatime, wow, kolibri, gangverk, selection, elementWidth, elementHeight, fetchedData, fetchedFinished, selectedElemntPosition } = data;
 
     return {
-        teatime, wow, kolibri, gangverk, selection, elementWidth, elementHeight, fetchedData, fetchedFinished, selectedElemntPositionX, selectedElemntPositionY
+        teatime, wow, kolibri, gangverk, selection, elementWidth, elementHeight, fetchedData, fetchedFinished, selectedElemntPosition
     };
 };
 

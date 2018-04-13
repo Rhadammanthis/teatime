@@ -12,6 +12,7 @@ import {
     SAVE_ELEMENTS_POSITION
 } from '../actions/types'
 import axios from 'axios'
+import { pointSubstraction } from '../util'
 
 export const getCompanyData = (company) => {
     return {
@@ -90,6 +91,7 @@ export const fetchCompanyData = (type) => {
                 dispatch({ type: FETCH_COMPANY_DATA, payload: response });
             })
             .catch((error) => {
+                dispatch({ type: FETCH_COMPANY_DATA, payload: null });
             });
     }
 
@@ -97,89 +99,56 @@ export const fetchCompanyData = (type) => {
 
 export const updateTranslationTargetCoordinates = (type, buttons) => {
 
-    var coordinates = {}
-    const marginOffset = 20;
+    var targetCoordinates = {}, origin = {}
 
     switch (type) {
         case TEATIME:
 
-            coordinates.teatime = { x: 0, y: 0, z: true }
+            origin = buttons.teatime.elementPosition
 
-            var resultant = calculateResultant(buttons.teatime.elementPositonX, buttons.teatime.elementPositonY,
-                buttons.wow.elementPositonX, buttons.wow.elementPositonY)
-            coordinates.wow = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.teatime.elementPositonX, buttons.teatime.elementPositonY,
-                buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY)
-            coordinates.kolibri = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.teatime.elementPositonX, buttons.teatime.elementPositonY,
-                buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY)
-            coordinates.gangverk = { x: resultant.x, y: resultant.y }
+            targetCoordinates.teatime = { x: 0, y: 0, z: true }
+            targetCoordinates.wow = pointSubstraction(origin, buttons.wow.elementPosition)
+            targetCoordinates.kolibri = pointSubstraction(origin, buttons.kolibri.elementPosition)
+            targetCoordinates.gangverk = pointSubstraction(origin, buttons.gangverk.elementPosition)
 
             break;
         case WOW:
 
-            coordinates.wow = { x: 0, y: 0, z: true }
+            origin = buttons.wow.elementPosition
 
-            var resultant = calculateResultant(buttons.wow.elementPositonX, buttons.wow.elementPositonY,
-                buttons.teatime.elementPositonX, buttons.teatime.elementPositonY)
-            coordinates.teatime = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.wow.elementPositonX, buttons.wow.elementPositonY,
-                buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY)
-            coordinates.kolibri = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.wow.elementPositonX, buttons.wow.elementPositonY,
-                buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY)
-            coordinates.gangverk = { x: resultant.x, y: resultant.y }
+            targetCoordinates.wow = { x: 0, y: 0, z: true }
+            targetCoordinates.teatime = pointSubstraction(origin, buttons.teatime.elementPosition)
+            targetCoordinates.kolibri = pointSubstraction(origin, buttons.kolibri.elementPosition)
+            targetCoordinates.gangverk = pointSubstraction(origin, buttons.gangverk.elementPosition)
 
             break;
         case KOLIBRI:
 
-            coordinates.kolibri = { x: 0, y: 0, z: true }
+            origin = buttons.kolibri.elementPosition
 
-            var resultant = calculateResultant(buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY,
-                buttons.wow.elementPositonX, buttons.wow.elementPositonY)
-            coordinates.wow = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY,
-                buttons.teatime.elementPositonX, buttons.teatime.elementPositonY)
-            coordinates.teatime = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY,
-                buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY)
-            coordinates.gangverk = { x: resultant.x, y: resultant.y }
+            targetCoordinates.kolibri = { x: 0, y: 0, z: true }
+            targetCoordinates.teatime = pointSubstraction(origin, buttons.teatime.elementPosition)
+            targetCoordinates.wow = pointSubstraction(origin, buttons.wow.elementPosition)
+            targetCoordinates.gangverk = pointSubstraction(origin, buttons.gangverk.elementPosition)
 
             break;
         case GANGVERK:
             
-        coordinates.gangverk = { x: 0, y: 0, z: true }
+            origin = buttons.gangverk.elementPosition
 
-            var resultant = calculateResultant(buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY,
-                buttons.wow.elementPositonX, buttons.wow.elementPositonY)
-            coordinates.wow = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY,
-                buttons.teatime.elementPositonX, buttons.teatime.elementPositonY)
-            coordinates.teatime = { x: resultant.x, y: resultant.y }
-
-            var resultant = calculateResultant(buttons.gangverk.elementPositonX, buttons.gangverk.elementPositonY,
-                buttons.kolibri.elementPositonX, buttons.kolibri.elementPositonY)
-            coordinates.kolibri = { x: resultant.x, y: resultant.y }
+            targetCoordinates.gangverk = { x: 0, y: 0, z: true }
+            targetCoordinates.teatime = pointSubstraction(origin, buttons.teatime.elementPosition)
+            targetCoordinates.kolibri = pointSubstraction(origin, buttons.kolibri.elementPosition)
+            targetCoordinates.wow = pointSubstraction(origin, buttons.wow.elementPosition)
             
             break;
     }
 
     return {
         type: UPDATE_TRANSLATION_TARGET,
-        payload: coordinates
-    }
-
+        payload: targetCoordinates
 }
 
-calculateResultant = (Px, Py, Qx, Qy) => {
-    return { x: Px - Qx, y: Py - Qy }
 }
 
 export const selectElement = (type) => {
