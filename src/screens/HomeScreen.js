@@ -24,7 +24,6 @@ class HomeScreen extends Component {
 				{
 					toValue: 1.2,
 					duration: 500,
-					useNativeDriver: true,
 				}
 
 			),
@@ -34,7 +33,6 @@ class HomeScreen extends Component {
 					{
 						toValue: 0.0,
 						duration: 500,
-						useNativeDriver: true,
 					}
 
 				),
@@ -43,7 +41,6 @@ class HomeScreen extends Component {
 					{
 						toValue: 0,
 						duration: 200,
-						useNativeDriver: true,
 					}
 				)
 			])
@@ -55,16 +52,19 @@ class HomeScreen extends Component {
 
 		if (this.props.shouldReverse) {
 
-			this.props.finishReverseFlow()
+			//Resets the neccesary variables in Redux to start the flow anew
 			this.props.resetView();
 
+			//Updates the neceesary variables that control de reversal of animations
+			this.props.finishReverseFlow()
+
+			//Anims the 'FYRIRTÆKJASKRÁ' back
 			Animated.parallel([
 				Animated.timing(
 					this.props.fade,
 					{
 						toValue: 1,
 						duration: 200,
-						useNativeDriver: true,
 					}
 				),
 				Animated.timing(
@@ -72,7 +72,6 @@ class HomeScreen extends Component {
 					{
 						toValue: 1,
 						duration: 500,
-						useNativeDriver: true,
 					}
 
 				),

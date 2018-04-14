@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Animated, TouchableWithoutFeedback, Easing, Dimensions } from 'react-native';
-import { getCompanyData, updateTranslationTargetCoordinates, selectElement, startHomeButtonAnim, goToDetail, saveElementSize, fetchCompanyData, saveSelectedElementsPosition, saveElementsPosition } from '../actions'
+import { updateTranslationTargetCoordinates, selectElement, startHomeButtonAnim, goToDetail, saveElementSize, fetchCompanyData, saveSelectedElementsPosition, saveElementsPosition } from '../actions'
 import { TEATIME, KOLIBRI, GANGVERK, WOW } from '../actions/types';
 
 class CompanyComponent extends Component {
 
     company = null;
-
-    componentDidMount() {
-        // this.props.getCompanyData(this.props.type)
-    }
 
     onLayout = (e) => {
         this.setState({
@@ -19,8 +15,11 @@ class CompanyComponent extends Component {
             x: e.nativeEvent.layout.x,
             y: e.nativeEvent.layout.y
         })
+
+        //Saves the on-screen element size
         this.props.saveElementSize(e.nativeEvent.layout.width, e.nativeEvent.layout.height)
 
+        //Saves the on-screen position of the element
         this.props.saveElementsPosition(this.props.type, e.nativeEvent.layout.x, e.nativeEvent.layout.y, e.nativeEvent.layout.height)
 
     }
@@ -51,19 +50,16 @@ class CompanyComponent extends Component {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.back(),
-                useNativeDriver: true,
             }),
             Animated.timing(this.company.animTranslation.y, {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.back(),
-                useNativeDriver: true,
             }),
             Animated.timing(this.company.animScale, {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.out(Easing.cubic),
-                useNativeDriver: true,
             }),
         ]).start(onComplete = () => {
         });
@@ -76,7 +72,6 @@ class CompanyComponent extends Component {
                     this.props.scale, {
                         toValue: 1.1,
                         duration: 500,
-                        useNativeDriver: true,
                     }
                 ),
                 Animated.stagger(100, [
@@ -84,7 +79,6 @@ class CompanyComponent extends Component {
                         this.props.scale, {
                             toValue: 1.0,
                             duration: 450,
-                            useNativeDriver: true,
                         }
                     )
                 ])
@@ -96,36 +90,24 @@ class CompanyComponent extends Component {
     }
 
     /**
-     * There's a weird issue here. After trying the conventional optimization methods
-     * and not achieving the desire effect I opted to use 'the NativeDriver. Most of the
-     * anymations are working perfectly except for these right here.
-     * The intention was to return every ComapnyCOmponent to their initial place by simply
-     * reversing the animation but sometjing prevents it from even rendering resulting in a
-     * more than anti climatic snap...
-     * Removing the use of the NativeDriver altogether reduces the overall quality of the
-     * animations but manages to play these below.
-     * Well... wel... wel... 
+     * Revrses the animations back to their initial state
      */
-    
     reverseAnims(){
         Animated.parallel([
             Animated.timing(this.company.animTranslation.x, {
                 toValue: 0,
                 duration: 400,
                 easing: Easing.out(Easing.quad),
-                useNativeDriver: true,
             }),
             Animated.timing(this.company.animTranslation.y, {
                 toValue: 0,
                 duration: 400,
                 easing: Easing.out(Easing.quad),
-                useNativeDriver: true,
             }),
             Animated.timing(this.company.animScale, {
                 toValue: 0,
                 duration: 400,
                 easing: Easing.in(Easing.cubic),
-                useNativeDriver: true,
             }),
         ]).start(onComplete = () => {
         });
@@ -182,8 +164,8 @@ class CompanyComponent extends Component {
                         this.props.selection !== this.props.type ?
                             {
                                 scale: this.company.animScale.interpolate({
-                                    inputRange: [0, 0.5, 1],
-                                    outputRange: [1, 0.32, 0.65]
+                                    inputRange: [0, 1],
+                                    outputRange: [1, 0.65]
                                 })
                             } :
                             {
@@ -245,6 +227,6 @@ const mapStateToProps = ({ data }) => {
     };
 };
 
-export default connect(mapStateToProps, { getCompanyData, updateTranslationTargetCoordinates, selectElement, 
+export default connect(mapStateToProps, { updateTranslationTargetCoordinates, selectElement, 
     startHomeButtonAnim, goToDetail, saveElementSize, fetchCompanyData, saveSelectedElementsPosition,
     saveElementsPosition })(CompanyComponent);

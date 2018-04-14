@@ -24,13 +24,11 @@ class DetailScreen extends Component {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.out(Easing.quad),
-                useNativeDriver: true,
             }),
             Animated.timing(this.state.animImageTranslation.y, {
                 toValue: 1,
                 duration: 700,
                 easing: Easing.back(),
-                useNativeDriver: true,
             }),
             Animated.stagger(200, [
                 //Translation
@@ -38,14 +36,12 @@ class DetailScreen extends Component {
                     toValue: 1,
                     duration: 700,
                     easing: Easing.in(Easing.quad),
-                    useNativeDriver: true,
                 }),
                 //Fade
                 Animated.timing(this.state.animInfoBox.y, {
                     toValue: 1,
                     duration: 700,
                     easing: Easing.in(Easing.quad),
-                    useNativeDriver: true,
                 }),
             ]),
         ]).start(onComplete = () => {
@@ -55,7 +51,6 @@ class DetailScreen extends Component {
                     toValue: 1,
                     duration: 500,
                     easing: Easing.out(Easing.quad),
-                    useNativeDriver: true,
                 })
             ]).start()
         });
@@ -153,26 +148,22 @@ class DetailScreen extends Component {
                 toValue: 0,
                 duration: 500,
                 easing: Easing.in(Easing.quad),
-                useNativeDriver: true,
             }),
             Animated.timing(this.state.animInfoBox.x, {
                 toValue: 0,
                 duration: 300,
                 easing: Easing.in(Easing.quad),
-                useNativeDriver: true,
             }),
             Animated.parallel([
                 Animated.timing(this.state.animImageTranslation.x, {
                     toValue: 0,
                     duration: 400,
                     easing: Easing.in(Easing.quad),
-                    useNativeDriver: true,
                 }),
                 Animated.timing(this.state.animImageTranslation.y, {
                     toValue: 0,
                     duration: 400,
                     easing: Easing.in(Easing.quad),
-                    useNativeDriver: true,
                 }),
             ])
         ]).start(onComplete = () => {
@@ -187,12 +178,7 @@ class DetailScreen extends Component {
 
         //vector in between the component's position and the center of the screen
         var resultant = pointSubstraction(this.state.screenCenter, this.props.selectedElemntPosition)
-
-        // var lel = pointSubstraction(this.state.screenCenter, { x: this.state.screenCenter.x, y: this.state.screenCenter.y + 30 })
-
-        // console.log('Resultant', resultant)
-        // console.log('Offset', lel)
-
+        
         return (
             <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
 
